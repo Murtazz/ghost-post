@@ -44,6 +44,33 @@ export default function GeneratorForm() {
 
       const data = await res.json();
       setPosts(data.posts);
+
+      // ── Save to localStorage history ──────────────────────────────
+      try {
+        const historyRaw = localStorage.getItem("ghost_post_history");
+        const history: Array<{
+          date: string;
+          topic: string;
+          posts: string[];
+        }> = historyRaw ? JSON.parse(historyRaw) : [];
+
+        history.unshift({
+          date: new Date().toISOString(),
+          topic: content.length > 120 ? content.slice(0, 120) + "…" : content,
+          posts: data.posts,
+        });
+
+        // Keep only the last 20 entries to avoid bloating storage
+        localStorage.setItem(
+          "ghost_post_history",
+          JSON.stringify(history.slice(0, 20))
+        );
+
+        // Notify other components that history changed
+        window.dispatchEvent(new Event("ghost_history_updated"));
+      } catch {
+        // localStorage errors are non-critical — silently ignore
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Try again."

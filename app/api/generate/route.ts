@@ -50,7 +50,7 @@ Rules:
 - Use short paragraphs, line breaks, and hooks that grab attention.
 - Keep each post under 1500 characters.
 - Do NOT use hashtags or "—" in the posts.
-- Number them Post 1, Post 2, Post 3.
+- Do NOT number or label the posts (no "Post 1", "Post 2", etc.).
 
 Return ONLY valid JSON in this exact format (no markdown, no code fences):
 {

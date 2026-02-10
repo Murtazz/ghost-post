@@ -1,5 +1,6 @@
 import { Ghost } from "lucide-react";
 import GeneratorForm from "./components/GeneratorForm";
+import HistoryList from "./components/HistoryList";
 
 export default function Home() {
   return (
@@ -17,6 +18,9 @@ export default function Home() {
 
       {/* Form */}
       <GeneratorForm />
+
+      {/* History */}
+      <HistoryList />
 
       {/* Footer */}
       <footer className="mt-16 pb-8 text-center text-sm text-gray-400">
