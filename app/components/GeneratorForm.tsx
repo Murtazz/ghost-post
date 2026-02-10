@@ -7,17 +7,24 @@ import {
   Loader2,
   Copy,
   Check,
+  Linkedin,
+  Twitter,
 } from "lucide-react";
 
 const vibes = ["Funny", "Professional", "Crazy"] as const;
+type Platform = "linkedin" | "twitter";
 
 export default function GeneratorForm() {
   const [content, setContent] = useState("");
   const [vibe, setVibe] = useState<string>("Professional");
+  const [platform, setPlatform] = useState<Platform>("linkedin");
   const [posts, setPosts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const isLinkedIn = platform === "linkedin";
+  const isTwitter = platform === "twitter";
 
   // ── Call our API route ────────────────────────────────────────────
   async function handleGenerate() {
@@ -34,7 +41,7 @@ export default function GeneratorForm() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, vibe }),
+        body: JSON.stringify({ content, vibe, platform }),
       });
 
       if (!res.ok) {
@@ -54,9 +61,16 @@ export default function GeneratorForm() {
           posts: string[];
         }> = historyRaw ? JSON.parse(historyRaw) : [];
 
+        const platformLabel = isTwitter ? "(Twitter) " : "";
+        const aiTitle = data.title || "";
+        const topic = aiTitle
+          ? platformLabel + aiTitle
+          : platformLabel +
+            (content.length > 120 ? content.slice(0, 120) + "…" : content);
+
         history.unshift({
           date: new Date().toISOString(),
-          topic: content.length > 120 ? content.slice(0, 120) + "…" : content,
+          topic,
           posts: data.posts,
         });
 
@@ -91,6 +105,39 @@ export default function GeneratorForm() {
     <div className="w-full max-w-2xl">
       {/* ── Input Card ─────────────────────────────────────────────── */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8 dark:border-slate-700 dark:bg-slate-900">
+        {/* ── Platform Toggle ──────────────────────────────────────── */}
+        <div className="mb-5">
+          <label className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+            Choose your platform
+          </label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPlatform("linkedin")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all ${
+                isLinkedIn
+                  ? "border-blue-500 bg-blue-50 text-blue-700 shadow-sm dark:border-blue-400 dark:bg-blue-950/50 dark:text-blue-300"
+                  : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100 dark:border-slate-600 dark:bg-slate-800 dark:text-gray-400 dark:hover:border-slate-500 dark:hover:bg-slate-700"
+              }`}
+            >
+              <Linkedin className="h-4 w-4" />
+              LinkedIn
+            </button>
+            <button
+              type="button"
+              onClick={() => setPlatform("twitter")}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all ${
+                isTwitter
+                  ? "border-gray-800 bg-gray-900 text-white shadow-sm dark:border-gray-400 dark:bg-gray-100 dark:text-gray-900"
+                  : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100 dark:border-slate-600 dark:bg-slate-800 dark:text-gray-400 dark:hover:border-slate-500 dark:hover:bg-slate-700"
+              }`}
+            >
+              <Twitter className="h-4 w-4" />
+              X / Twitter
+            </button>
+          </div>
+        </div>
+
         {/* Textarea */}
         <label
           htmlFor="content"
@@ -103,7 +150,11 @@ export default function GeneratorForm() {
           rows={6}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Drop an article link, brain-dump your notes, or paste anything you want turned into a LinkedIn post..."
+          placeholder={
+            isTwitter
+              ? "Drop a topic, hot take, or idea you want turned into viral tweets..."
+              : "Drop an article link, brain-dump your notes, or paste anything you want turned into a LinkedIn post..."
+          }
           className="w-full resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 placeholder-gray-400 transition-colors focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-400 dark:focus:bg-slate-800"
         />
 
@@ -146,7 +197,7 @@ export default function GeneratorForm() {
           ) : (
             <>
               <Sparkles className="h-5 w-5" />
-              Generate Posts
+              Generate {isTwitter ? "Tweets" : "Posts"}
             </>
           )}
         </button>
@@ -155,7 +206,9 @@ export default function GeneratorForm() {
         <p className="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
           {content.length > 0
             ? `${content.length} characters entered`
-            : "Tip: The more detail you give, the better the posts."}
+            : isTwitter
+              ? "Tip: Keep it spicy. Twitter loves hot takes."
+              : "Tip: The more detail you give, the better the posts."}
         </p>
       </div>
 
@@ -178,7 +231,9 @@ export default function GeneratorForm() {
               <div className="space-y-2">
                 <div className="h-3 w-full rounded bg-gray-200 dark:bg-slate-700" />
                 <div className="h-3 w-5/6 rounded bg-gray-200 dark:bg-slate-700" />
-                <div className="h-3 w-4/6 rounded bg-gray-200 dark:bg-slate-700" />
+                {isLinkedIn && (
+                  <div className="h-3 w-4/6 rounded bg-gray-200 dark:bg-slate-700" />
+                )}
               </div>
             </div>
           ))}
@@ -189,7 +244,9 @@ export default function GeneratorForm() {
       {posts.length > 0 && (
         <div className="mt-8 space-y-4">
           <h2 className="text-center text-lg font-semibold text-gray-700 dark:text-gray-200">
-            Your LinkedIn posts are ready!
+            {isTwitter
+              ? "Your tweets are ready to fire!"
+              : "Your LinkedIn posts are ready!"}
           </h2>
 
           {posts.map((post, index) => (
@@ -199,9 +256,27 @@ export default function GeneratorForm() {
             >
               {/* Card header */}
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                  Post {index + 1}
-                </span>
+                <div className="flex items-center gap-2">
+                  {isTwitter ? (
+                    <Twitter className="h-3.5 w-3.5 text-gray-800 dark:text-gray-200" />
+                  ) : (
+                    <Linkedin className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                  )}
+                  <span
+                    className={`text-xs font-bold uppercase tracking-wider ${
+                      isTwitter
+                        ? "text-gray-800 dark:text-gray-200"
+                        : "text-blue-600 dark:text-blue-400"
+                    }`}
+                  >
+                    {isTwitter ? `Tweet ${index + 1}` : `Post ${index + 1}`}
+                  </span>
+                  {isTwitter && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                      ({post.length}/280)
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={() => handleCopy(post, index)}
                   className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-slate-600 dark:text-gray-400 dark:hover:border-blue-500 dark:hover:bg-slate-800 dark:hover:text-blue-400"

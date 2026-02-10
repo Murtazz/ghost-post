@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock, Trash2, ChevronDown, ChevronUp, Copy, Check, Cloud } from "lucide-react";
+import { Clock, Trash2, ChevronDown, ChevronUp, Copy, Check, Cloud, Linkedin, Twitter } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -171,6 +171,12 @@ export default function HistoryList() {
           <div className="space-y-3">
             {history.map((entry, i) => {
               const isExpanded = expandedIndex === i;
+              const isTwitter = entry.topic.startsWith("(Twitter) ");
+              const cleanTopic = entry.topic.replace(/^\(Twitter\)\s*/, "");
+              const shortTitle =
+                cleanTopic.length > 60
+                  ? cleanTopic.slice(0, 60) + "…"
+                  : cleanTopic;
 
               return (
                 <div
@@ -183,14 +189,27 @@ export default function HistoryList() {
                     className="flex w-full items-center justify-between px-5 py-4 text-left"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-100">
-                        {entry.topic}
-                      </p>
-                      <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+                      <div className="flex items-center gap-2">
+                        {isTwitter ? (
+                          <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-gray-900 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white dark:bg-gray-200 dark:text-gray-900">
+                            <Twitter className="h-2.5 w-2.5" />
+                            X
+                          </span>
+                        ) : (
+                          <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+                            <Linkedin className="h-2.5 w-2.5" />
+                            In
+                          </span>
+                        )}
+                        <p className="truncate text-sm font-medium text-gray-800 dark:text-gray-100">
+                          {shortTitle}
+                        </p>
+                      </div>
+                      <p className="mt-0.5 ml-[42px] text-xs text-gray-400 dark:text-gray-500">
                         {formatDate(entry.date)}
                         {entry.vibe && ` · ${entry.vibe}`}
                         {" · "}
-                        {entry.posts.length} post
+                        {entry.posts.length} {isTwitter ? "tweet" : "post"}
                         {entry.posts.length !== 1 ? "s" : ""}
                       </p>
                     </div>
@@ -212,8 +231,8 @@ export default function HistoryList() {
                             className="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-slate-700 dark:bg-slate-800"
                           >
                             <div className="mb-2 flex items-center justify-between">
-                              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                                Post {pi + 1}
+                              <span className={`text-xs font-bold uppercase tracking-wider ${isTwitter ? "text-gray-800 dark:text-gray-200" : "text-blue-600 dark:text-blue-400"}`}>
+                                {isTwitter ? `Tweet ${pi + 1}` : `Post ${pi + 1}`}
                               </span>
                               <button
                                 onClick={() => handleCopy(post, copyKey)}
