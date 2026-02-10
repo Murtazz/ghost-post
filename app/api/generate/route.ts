@@ -35,29 +35,34 @@ export async function POST(req: NextRequest) {
   }
 
   // ── 3. Build the prompt ───────────────────────────────────────────
-  const prompt = `You are a LinkedIn content expert and ghostwriter.
+  const prompt = `You are a world-class LinkedIn ghostwriter known for high engagement.
 
-A user has given you the following raw text (it could be an article link, messy notes, or a brain-dump):
-
----
+USER INPUT (Source Material):
+"""
 ${content}
----
+"""
 
-Using that as source material, write exactly 3 distinct LinkedIn posts in a **${vibe}** tone.
+YOUR TASK:
+Write exactly 3 DISTINCT LinkedIn posts based on the source material above. Use a **${vibe}** tone.
 
-Rules:
-- Each post should be self-contained and ready to copy-paste into LinkedIn.
-- Use short paragraphs, line breaks, and hooks that grab attention.
-- Keep each post under 1500 characters.
-- Do NOT use hashtags or "—" in the posts.
-- Do NOT number or label the posts (no "Post 1", "Post 2", etc.).
+CRITICAL STRUCTURAL RULES:
+1.  **Structure 1 (The Story):** Start with a personal "I" statement or a moment in time. Focus on the journey/struggle.
+2.  **Structure 2 (The Value List):** A punchy headline followed by a bulleted list of actionable takeaways.
+3.  **Structure 3 (The Contrarian/Insight):** Start with a bold, slightly controversial statement or a "Hard Truth."
 
-Return ONLY valid JSON in this exact format (no markdown, no code fences):
+⛔️ NEGATIVE CONSTRAINTS (READ CAREFULLY):
+- **NO LABELS:** Do NOT start posts with "Post 1:", "Option 1:", "The Story:", "##", or any other header. Start directly with the hook.
+- **NO HASHTAGS:** Do not use hashtags.
+- **NO EMOJIS:** Unless the tone is specifically "Funny".
+- **NO FLUFF:** Do not use "Hello connections" or "I want to share".
+
+OUTPUT FORMAT:
+Return ONLY raw, parseable JSON. Do not include markdown formatting.
 {
   "posts": [
-    "Full text of post 1 here",
-    "Full text of post 2 here",
-    "Full text of post 3 here"
+    "Text of post 1 (starts immediately with the hook)",
+    "Text of post 2 (starts immediately with the hook)",
+    "Text of post 3 (starts immediately with the hook)"
   ]
 }`;
 
