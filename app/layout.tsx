@@ -12,14 +12,14 @@ export const metadata: Metadata = {
       "Stop staring at a blank page. Generate polished LinkedIn posts and viral tweets in seconds with AI.",
     type: "website",
     siteName: "Ghost-Post",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Ghost-Post" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Ghost-Post" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ghost-Post | AI Social Media Writer",
     description:
       "Stop staring at a blank page. Generate polished LinkedIn posts and viral tweets in seconds with AI.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
 };
 
