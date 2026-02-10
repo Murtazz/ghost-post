@@ -20,7 +20,7 @@ export default function Home() {
           Ghost-Post Generator
         </h1>
         <p className="mt-3 text-lg text-gray-500 dark:text-gray-400">
-          Paste a link. Get LinkedIn posts. Like magic.
+          Paste a link or messy notes. Get polished posts and tweets. Like magic.
         </p>
       </div>
 
