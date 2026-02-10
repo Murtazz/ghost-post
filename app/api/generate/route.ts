@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
   // ── 1. Grab the API key from the environment ──────────────────────
@@ -82,6 +83,29 @@ Return ONLY raw, parseable JSON. Do not include markdown formatting.
       .trim();
 
     const parsed = JSON.parse(cleaned);
+
+    // ── 6. If user is logged in, save to Supabase ───────────────────
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const topic =
+          content.length > 200 ? content.slice(0, 200) + "…" : content;
+
+        await supabase.from("posts").insert({
+          user_id: user.id,
+          topic,
+          vibe,
+          generated_content: parsed.posts,
+        });
+      }
+    } catch (dbErr) {
+      // DB save is non-critical — log but don't fail the request
+      console.error("Failed to save to Supabase:", dbErr);
+    }
 
     return NextResponse.json(parsed);
   } catch (err) {
