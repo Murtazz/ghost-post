@@ -5,7 +5,7 @@ import {
   Sparkles,
   ChevronDown,
   Loader2,
-  ClipboardCopy,
+  Copy,
   Check,
 } from "lucide-react";
 
@@ -114,7 +114,7 @@ export default function GeneratorForm() {
           {loading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Generating...
+              Ghostwriting...
             </>
           ) : (
             <>
@@ -186,7 +186,7 @@ export default function GeneratorForm() {
                     </>
                   ) : (
                     <>
-                      <ClipboardCopy className="h-3.5 w-3.5" />
+                      <Copy className="h-3.5 w-3.5" />
                       Copy
                     </>
                   )}
@@ -194,7 +194,7 @@ export default function GeneratorForm() {
               </div>
 
               {/* Post content — preserve line breaks */}
-              <p className="whitespace-pre-line text-sm leading-relaxed text-gray-700">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
                 {post}
               </p>
             </div>
