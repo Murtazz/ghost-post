@@ -29,10 +29,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // IMPORTANT: Do NOT run any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake here could make it very
-  // hard to debug session issues.
-  await supabase.auth.getUser();
+  // Use getSession() instead of getUser() to avoid a network round-trip
+  // to Supabase on every request. getSession() reads the JWT from the
+  // cookie locally and only contacts Supabase when the token needs
+  // refreshing. For actual authorization checks (API routes, server
+  // components), always use getUser() which validates server-side.
+  await supabase.auth.getSession();
 
   return supabaseResponse;
 }
