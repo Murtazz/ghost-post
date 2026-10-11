@@ -31,7 +31,7 @@ Each generation also gets an AI-generated title so you can glance at your histor
 ### 1. Clone it
 
 ```bash
-git clone https://github.com/your-username/ghost-post.git
+git clone https://github.com/Murtazz/ghost-post.git
 cd ghost-post
 npm install
 ```
